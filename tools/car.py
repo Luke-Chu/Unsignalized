@@ -1,4 +1,37 @@
 INTER_WIDTH: int = 25
+MAX_V1 = 16.67
+MAX_V2 = 12
+MAX_AC = 4
+MAX_DC = 6
+MAX_DE_DIS = (MAX_V1 * MAX_V1 - MAX_V2 * MAX_V2) / (2 * MAX_DC)
+
+
+def _get_time_1(ac_dis, v, p):
+    # 加速到最大速度 然后匀速，最后减速到12
+    t1 = (MAX_V1 - v) / MAX_AC  # 计算加速阶段所用时间
+    d1 = ac_dis  # 加速阶段距离
+    # 第三阶段从最大速度V_MAX1 减速到V_MAX2
+    t3 = (MAX_V1 - MAX_V2) / MAX_DC
+    d3 = MAX_DE_DIS
+    # 第二阶段是匀速阶段
+    t2 = (p - d1 - d3) / MAX_V1
+    return t1 + t2 + t3
+
+
+def _get_time_2(v, p):
+    # 先匀速，再减速到12
+    t2 = (v - MAX_V2) / MAX_DC
+    d2 = (v * v - MAX_V2 * MAX_V2) / (2 * MAX_DC)
+    t1 = (p - d2) / v
+    return t1 + t2
+
+
+def _get_time_3(v, p):
+    # 加速到12，然后匀速
+    t1 = (MAX_V2 - v) / MAX_AC
+    d1 = (MAX_V2 * MAX_V2 - v * v) / (2 * MAX_AC)
+    t2 = (p - d1) / MAX_V2
+    return t1 + t2
 
 
 class Car:
@@ -67,6 +100,28 @@ class Car:
             return (self.y - INTER_WIDTH) / self.v
         else:
             return -self.x / self.v
+
+    def min_arrive_time(self) -> float:
+        # 计算加速到最大速度所需距离
+        max_ac_dis = (MAX_V1 * MAX_V1 - self.v * self.v) / (2 * MAX_AC)
+        if self.lane in (11, 12, 13):
+            dis_from_intersection = - self.y
+        elif self.lane in (21, 22, 23):
+            dis_from_intersection = self.x - INTER_WIDTH
+        elif self.lane in (31, 32, 33):
+            dis_from_intersection = self.y - INTER_WIDTH
+        else:
+            dis_from_intersection = - self.x
+        if dis_from_intersection - MAX_DE_DIS > max_ac_dis:
+            # 如果能加速到最大速度，则先加速，再匀速，最后减速
+            return _get_time_1(max_ac_dis, self.v, dis_from_intersection)
+        else:  # 如果不能加速到最大速度
+            if self.v > MAX_V2:
+                # 若当前速度大于交叉口速度，则先匀速，再减速
+                return _get_time_2(self.v, dis_from_intersection)
+            else:
+                # 若当前速度小于交叉口速度，则先加速，再匀速
+                return _get_time_3(self.v, dis_from_intersection)
 
     def is_in_con_area(self) -> bool:
         if self.lane in (11, 12, 13):
