@@ -32,7 +32,8 @@ for _index, _row in _data_df.iterrows():
     # 生成车辆对象
     _car = Car(_id, _lane, _v, _x, _y)
     # 计算到达时间
-    arrive_time_dict[_id] = math.ceil(_car.reach_time() * 2)
+    # arrive_time_dict[_id] = math.ceil(_car.min_arrive_time() * 2)
+    arrive_time_dict[_id] = _car.min_arrive_time()
     # 加入列表
     car_list.append(_car)
     # 将该车加入对应车道列表
