@@ -7,19 +7,19 @@ from tools.car import Car
 from tools.const_data import car_nums, conflict_lane
 from tools.init_car import car_list, arrive_time_dict, lane_of_car
 
-# 通过交叉口的时间设置为2.5秒，在GAMS中离散时间为0.5秒一个时刻
-_t_cross: int = 4
+# 通过交叉口的时间设置为2秒，在GAMS中离散时间为0.5秒一个时刻
+_t_cross: int = 2
 # 同车道先后通过交叉口的时间间隔
 _same_lane_arr_interval = 2
 
 
 def _get_cars_order():
-    order_cars = sorted(car_list, key=lambda car: car.reach_time())
+    order_cars = sorted(car_list, key=lambda car: car.min_arrive_time())
     print("初始顺序")
     for index, c in enumerate(order_cars):
-        print(f"{index + 1: <2}: {c.id: <2}({c.lane})车通过，到达时间{c.reach_time(): <9f}，当前速度{c.v: <5f}")
+        print(f"{index + 1: <2}: {c.id: <2}({c.lane})车通过，到达时间{c.min_arrive_time(): <9f}，当前速度{c.v: <5f}")
     # 调整正确的顺序
-    _adjust_order(order_cars)
+    return _adjust_order(order_cars)
 
 
 def _adjust_order(old_order: List[Car]):
@@ -43,7 +43,7 @@ def _adjust_order(old_order: List[Car]):
     count = 1
     for o in car_id_order:
         print(f'{o:<2}', end=" -> ")
-        if count % 15 == 0:
+        if count % 10 == 0:
             print()
         count += 1
     """对car_id_order遍历，调整不合理的顺序"""
@@ -67,20 +67,22 @@ def _adjust_order(old_order: List[Car]):
             car_id_order.insert(index_of_first + 1, c_id)
             # 再将该元素原来位置删除
             car_id_order.pop(index_of_car)
+    print(car_id_order)
     print(f"调整后的车辆顺序:")
     for o in car_id_order:
         print(f'{o:<2}', end=" -> ")
-        if count % 15 == 0:
+        if count % 10 == 0:
             print()
         count += 1
     """根据次序确定到达时间"""
-    _get_arrive_time(car_id_order)
+    return car_id_order
+    # _get_arrive_time(car_id_order)
 
 
 # 开始分析每辆车与前车是否有冲突，如果没有则在同一层，可以同时通过
-def _get_arrive_time(car_id_order: list):
+def _get_arrive_time(car_id_order: list) -> dict:
     # 得到最终顺序后，确定第一辆车的到达时刻
-    first_arrive_time = arrive_time_dict[car_id_order[0]] + 1
+    first_arrive_time = arrive_time_dict[car_id_order[0]]
     # first_arrive_time = 6
     # 定义到达时刻的字典
     arrive_dict = {}
@@ -131,10 +133,11 @@ def _get_arrive_time(car_id_order: list):
         """循环最后还需要更新访问字典"""
         visited[_lane].append(i)
     # 打印分析数据
-    from tools.print_code import print_analysis_data
-    print_analysis_data('1', arrive_dict, _t_cross)
-    print()
-    _print_gams_file1(arrive_dict)
+    # from tools.print_code import print_analysis_data
+    # print_analysis_data('1', arrive_dict, _t_cross)
+    # print()
+    # _print_gams_file1(arrive_dict)
+    return arrive_dict
 
 
 def _print_gams_file1(arrive_time: dict):

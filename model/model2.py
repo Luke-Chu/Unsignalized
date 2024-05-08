@@ -6,10 +6,10 @@ import numpy as np
 from tools.const_data import conflict_lane
 from tools.init_car import car_nums, car_list, arrive_time_dict
 
-_t_cross = 4
+_t_cross = 2
 
 
-def _get_c_d():
+def _get_c_d() -> dict:
     # 初始化冲突集和发散集
     conflict_set = {i: [] for i in range(1, car_nums + 1)}
     divergent_set = {i: [0] for i in range(1, car_nums + 1)}
@@ -32,7 +32,7 @@ def _get_c_d():
     # 遍历输出
     for i in range(1, car_nums + 1):
         print("C%-3d = " % i, "%-76s" % conflict_set[i], "D%-3d = " % i, divergent_set[i])
-    _cal_depth(conflict_set, divergent_set)
+    return _cal_depth(conflict_set, divergent_set)
 
 
 def _conflict_digraph(conflict_set: list, divergent_set: list):
@@ -56,7 +56,7 @@ def _conflict_digraph(conflict_set: list, divergent_set: list):
                 bi_edges.add((i, j))
 
 
-def _cal_depth(conflict_set: dict, divergent_set: dict):
+def _cal_depth(conflict_set: dict, divergent_set: dict) -> dict:
     # 初始化深度
     depth = {i: int for i in range(car_nums + 1)}
     depth[0] = 0
@@ -107,20 +107,22 @@ def _cal_depth(conflict_set: dict, divergent_set: dict):
         if count % 3 == 0:
             print()
         count += 1
+    del depth[0]
+    return depth
     # 最先到达时间默认为第一辆车
-    min_ = arrive_time_dict[1] + 1
-    min_ = 17
-    # 设置一个字典存储每个结点的到达时刻
-    arrive_dict = {}
-    for c_id, d_ in depth.items():
-        arrive_dict[c_id] = (d_ - 1) * _t_cross + min_
-    # 删除0结点的到达时间
-    del arrive_dict[0]
+    # min_ = arrive_time_dict[1] + 1
+    # min_ = 17
+    # # 设置一个字典存储每个结点的到达时刻
+    # arrive_dict = {}
+    # for c_id, d_ in depth.items():
+    #     arrive_dict[c_id] = (d_ - 1) * _t_cross + min_
+    # # 删除0结点的到达时间
+    # del arrive_dict[0]
     # 打印分析数据
-    from tools.print_code import print_analysis_data
-    print_analysis_data('2', arr_d=arrive_dict, cross_t=_t_cross)
-    print()
-    _print_gams_file2(arrive_dict)
+    # from tools.print_code import print_analysis_data
+    # print_analysis_data('2', arr_d=arrive_dict, cross_t=_t_cross)
+    # print()
+    # _print_gams_file2(arrive_dict)
 
 
 def _print_gams_file2(arrive_time: dict):

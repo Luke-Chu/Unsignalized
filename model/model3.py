@@ -44,7 +44,7 @@ def _get_matching():
         count += 1
     print()
     # 计算深度
-    _get_depth(matching)
+    return _get_depth(matching)
 
 
 def get_car_index(matching: list):
@@ -104,19 +104,21 @@ def _get_depth(matching: list):
         print(f"结点{i:<2}:深度{depth[i]:<2}", end='\t\t')
         if i % 5 == 0:
             print()
+    del depth[0]
+    return depth
     # 最先到达时间默认为第一辆车
     # min_ = arrive_time_dict[3] + 1
-    min_ = 16
-    # 设置一个字典存储每个结点的到达时刻
-    arrive_dict = {}
-    for c_id, d_ in depth.items():
-        arrive_dict[c_id] = (d_ - 1) * _t_cross + min_
-    # 删除0结点的到达时间
-    del arrive_dict[0]
-    # 打印分析数据
-    from tools.print_code import print_analysis_data
-    print_analysis_data('3', arrive_dict, _t_cross)
-    _print_gams_file3(arrive_dict)
+    # min_ = 16
+    # # 设置一个字典存储每个结点的到达时刻
+    # arrive_dict = {}
+    # for c_id, d_ in depth.items():
+    #     arrive_dict[c_id] = (d_ - 1) * _t_cross + min_
+    # # 删除0结点的到达时间
+    # del arrive_dict[0]
+    # # 打印分析数据
+    # from tools.print_code import print_analysis_data
+    # print_analysis_data('3', arrive_dict, _t_cross)
+    # _print_gams_file3(arrive_dict)
 
 
 def _print_gams_file3(arrive_time: dict):
