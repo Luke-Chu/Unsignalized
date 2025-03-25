@@ -30,8 +30,8 @@ def _get_c_d() -> dict:
         # 将该车加入已检查集合
         visited_car.append(car)
     # 遍历输出
-    for i in range(1, car_nums + 1):
-        print("C%-3d = " % i, "%-76s" % conflict_set[i], "D%-3d = " % i, divergent_set[i])
+    # for i in range(1, car_nums + 1):
+    #     print("C%-3d = " % i, "%-76s" % conflict_set[i], "D%-3d = " % i, divergent_set[i])
     return _cal_depth(conflict_set, divergent_set)
 
 
@@ -102,11 +102,11 @@ def _cal_depth(conflict_set: dict, divergent_set: dict) -> dict:
                     parent_nodes[i] = k
     # 输出节点深度
     count = 1
-    for i in range(1, car_nums + 1):
-        print(f"结点{i:<2}: 深度为{depth[i]:<2} 父结点为{parent_nodes[i]:<3}", end="  ")
-        if count % 3 == 0:
-            print()
-        count += 1
+    # for i in range(1, car_nums + 1):
+    #     print(f"结点{i:<2}: 深度为{depth[i]:<2} 父结点为{parent_nodes[i]:<3}", end="  ")
+    #     if count % 3 == 0:
+    #         print()
+    #     count += 1
     del depth[0]
     return depth
     # 最先到达时间默认为第一辆车

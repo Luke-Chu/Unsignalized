@@ -12,7 +12,7 @@ car_index_in_matching = {}
 
 
 def _get_matching():
-    print("每个车道的车辆集合", cars_of_lane)
+    # print("每个车道的车辆集合", cars_of_lane)
     # 定义无向图
     G = nx.Graph()
     # 添加结点
@@ -35,14 +35,14 @@ def _get_matching():
     matching = nx.algorithms.matching.max_weight_matching(G)
     # sorted_matching = sorted(matching)
     matching = switch_matching(list(matching))
-    print("最大匹配对:")
-    count = 1
-    for m in matching:
-        print(f'({m[0]:>2},{m[1]:<2})', end="  ")
-        if count % 5 == 0:
-            print()
-        count += 1
-    print()
+    # print("最大匹配对:")
+    # count = 1
+    # for m in matching:
+    #     print(f'({m[0]:>2},{m[1]:<2})', end="  ")
+    #     if count % 5 == 0:
+    #         print()
+    #     count += 1
+    # print()
     # 计算深度
     return _get_depth(matching)
 
@@ -100,10 +100,10 @@ def _get_depth(matching: list):
     for id_, d in depth.items():
         if d is None:
             depth[id_] = len(matching) + 1
-    for i in range(1, car_nums + 1):
-        print(f"结点{i:<2}:深度{depth[i]:<2}", end='\t\t')
-        if i % 5 == 0:
-            print()
+    # for i in range(1, car_nums + 1):
+    #     print(f"结点{i:<2}:深度{depth[i]:<2}", end='\t\t')
+    #     if i % 5 == 0:
+    #         print()
     del depth[0]
     return depth
     # 最先到达时间默认为第一辆车

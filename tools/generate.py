@@ -185,7 +185,7 @@ def _out_fun():
                 out_dict['y'].append(c.y)
     df = _pd.DataFrame(out_dict)
     df.sort_values(by='id', ascending=True, inplace=True)
-    df.to_csv(f'{os.path.dirname(os.path.abspath(__file__))}/../files/cars_{car_nums}_init_data_test.csv', index=False)
+    df.to_csv(f'{os.path.dirname(os.path.abspath(__file__))}/../files/cars_{car_nums}_init_data.csv', index=False)
 
 
 def get_cars_data():
